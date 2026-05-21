@@ -20,5 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \App\Models\Language::observe(\App\Observers\LanguageObserver::class);
+        \App\Models\BuilderPage::observe(\App\Observers\BuilderPageObserver::class);
+        \App\Models\BuilderPageTranslation::observe(\App\Observers\BuilderPageTranslationObserver::class);
     }
 }
