@@ -4,7 +4,9 @@ import 'grapesjs/dist/css/grapes.min.css';
 import { plugins, registerBlocks } from './builder/blocks.js';
 import { initColoris, rebindColorisOnStyleChanges } from './builder/coloris-init.js';
 import { registerSection } from './builder/sections/section.js';
+import { registerColumn } from './builder/sections/column.js';
 import { openSectionPicker } from './builder/sections/section-picker.js';
+import { mountStylePanel } from './builder/style-panel/index.js';
 
 const SAVE_DEBOUNCE_MS = 5000;
 
@@ -54,9 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     registerSection(editor);
+    registerColumn(editor);
     registerBlocks(editor);
     initColoris();
     rebindColorisOnStyleChanges(editor);
+    mountStylePanel(editor, document.getElementById('mp-style-panel'));
 
     // Initial content
     if (config.translation?.components) {

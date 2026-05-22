@@ -44,8 +44,28 @@
         </div>
     </div>
 
-    <div id="gjs" class="flex-1 overflow-hidden" data-config='@json($config)'></div>
+    <div class="flex-1 flex min-h-0">
+        <div id="gjs" class="flex-1 min-w-0 overflow-hidden" data-config='@json($config)'></div>
+        <aside id="mp-style-panel" class="w-80 shrink-0 bg-slate-50 border-l border-slate-200 overflow-y-auto">
+            <div class="p-4 text-xs text-slate-500">
+                Select an element on the canvas to edit its style.
+            </div>
+        </aside>
+    </div>
 </div>
+
+<style>
+    /* Hide GrapesJS default right panel + views so our custom panel is the only one */
+    .gjs-pn-views-container,
+    .gjs-pn-views,
+    .gjs-pn-options {
+        display: none !important;
+    }
+    .gjs-cv-canvas {
+        width: 100% !important;
+        right: 0 !important;
+    }
+</style>
 
 {{-- Settings modal --}}
 <div id="gjs-settings-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
