@@ -1,0 +1,65 @@
+/* MiniPress builder runtime — shared by editor canvas and public pages.
+   Structural CSS only. Per-element styling lives in saved page CSS. */
+
+:root {
+  --mp-sec-inner: 1200px;
+  --mp-sec-gap: 20px;
+  --mp-col-gap: 16px;
+}
+
+.mp-sec {
+  width: 100%;
+  padding: 80px 24px;
+  position: relative;
+}
+
+.mp-sec--boxed .mp-sec__inner,
+.mp-sec--full  .mp-sec__inner {
+  max-width: var(--mp-sec-inner);
+  margin: 0 auto;
+}
+
+.mp-sec__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mp-sec-gap);
+  align-items: flex-start;
+  width: 100%;
+}
+
+.mp-sec[data-valign="middle"] .mp-sec__inner { align-items: center; }
+.mp-sec[data-valign="bottom"] .mp-sec__inner { align-items: flex-end; }
+
+.mp-col {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-col-gap);
+}
+
+.mp-col[data-content-pos="center"] { align-items: center; }
+.mp-col[data-content-pos="end"]    { align-items: flex-end; }
+
+@media (max-width: 768px) {
+  .mp-col { flex-basis: 100% !important; }
+}
+
+/* Resize grip — shown only inside the editor (parent has .gjs-editor- root class) */
+.gjs-editor .mp-col + .mp-col {
+  position: relative;
+}
+.gjs-editor .mp-col + .mp-col::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--mp-sec-gap) / 2);
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 5;
+}
+.gjs-editor .mp-col + .mp-col:hover::before {
+  background: rgba(59, 130, 246, 0.3);
+}

@@ -79,7 +79,7 @@ it('update saves translation html/css/components/styles for the requested locale
             'is_homepage' => false,
             'html' => '<p>new content</p>',
             'css' => '.hero{color:red}',
-            'components_json' => [['type' => 'text', 'content' => 'new content']],
+            'components_json' => [['type' => 'mp-section', 'components' => [['type' => 'mp-text', 'components' => [['type' => 'textnode', 'content' => 'new content']]]]]],
             'styles_json' => [['selectors' => ['.hero'], 'style' => ['color' => 'red']]],
             'seo' => [
                 'en' => ['meta_title' => 'New Title — Site', 'robots' => 'index,follow'],
@@ -92,7 +92,7 @@ it('update saves translation html/css/components/styles for the requested locale
     expect($t->title)->toBe('New Title');
     expect($t->html)->toBe('<p>new content</p>');
     expect($t->css)->toBe('.hero{color:red}');
-    expect($t->components_json)->toBe([['type' => 'text', 'content' => 'new content']]);
+    expect($t->components_json)->toBe([['type' => 'mp-section', 'components' => [['type' => 'mp-text', 'components' => [['type' => 'textnode', 'content' => 'new content']]]]]]);
 
     expect($page->fresh()->seoFor('en')->meta_title)->toBe('New Title — Site');
 });
@@ -182,4 +182,112 @@ it('publish toggles published -> draft', function () {
 
     $resp->assertOk()->assertJsonPath('status', 'draft');
     expect($page->fresh()->status)->toBe('draft');
+});
+
+it('update accepts a valid component tree (section > column > widget > textnode)', function () {
+    $page = BuilderPage::factory()->create(['type' => 'page', 'slug' => 'tree-ok']);
+    $page->translations()->create(['locale' => 'en', 'title' => 'X', 'html' => '', 'css' => '']);
+    $page->seo()->create(['locale' => 'en']);
+
+    $tree = [[
+        'type' => 'mp-section',
+        'attributes' => ['id' => 'i1'],
+        'props' => ['width' => 'boxed'],
+        'components' => [[
+            'type' => 'mp-column',
+            'attributes' => ['id' => 'i2'],
+            'props' => ['size_pct' => 100],
+            'components' => [[
+                'type' => 'mp-heading',
+                'attributes' => ['id' => 'i3'],
+                'props' => ['level' => 'h1'],
+                'components' => [['type' => 'textnode', 'content' => 'Hello']],
+            ]],
+        ]],
+    ]];
+
+    $this->actingAs($this->admin)
+        ->putJson(route('admin.builder.update', $page->id), [
+            'locale' => 'en',
+            'title' => 'X',
+            'slug' => 'tree-ok',
+            'status' => 'draft',
+            'is_homepage' => false,
+            'html' => '<section class="mp-sec mp-sec--boxed" id="i1"><div class="mp-sec__inner"><div class="mp-col" id="i2"><h1 id="i3">Hello</h1></div></div></section>',
+            'css' => '',
+            'components_json' => $tree,
+            'seo' => ['en' => []],
+        ])->assertOk();
+});
+
+it('update rejects a tree whose root is not mp-section', function () {
+    $page = BuilderPage::factory()->create(['type' => 'page', 'slug' => 'bad-root']);
+    $page->translations()->create(['locale' => 'en', 'title' => 'X', 'html' => '', 'css' => '']);
+    $page->seo()->create(['locale' => 'en']);
+
+    $tree = [[
+        'type' => 'mp-heading',
+        'components' => [['type' => 'textnode', 'content' => 'orphan']],
+    ]];
+
+    $this->actingAs($this->admin)
+        ->putJson(route('admin.builder.update', $page->id), [
+            'locale' => 'en',
+            'title' => 'X',
+            'slug' => 'bad-root',
+            'status' => 'draft',
+            'is_homepage' => false,
+            'html' => '',
+            'css' => '',
+            'components_json' => $tree,
+            'seo' => ['en' => []],
+        ])->assertStatus(422)
+          ->assertJsonValidationErrors('components_json');
+});
+
+it('update rejects a tree with an unknown component type', function () {
+    $page = BuilderPage::factory()->create(['type' => 'page', 'slug' => 'unknown-type']);
+    $page->translations()->create(['locale' => 'en', 'title' => 'X', 'html' => '', 'css' => '']);
+    $page->seo()->create(['locale' => 'en']);
+
+    $tree = [[
+        'type' => 'mp-section',
+        'components' => [[
+            'type' => 'mp-column',
+            'components' => [['type' => 'mp-evil', 'components' => []]],
+        ]],
+    ]];
+
+    $this->actingAs($this->admin)
+        ->putJson(route('admin.builder.update', $page->id), [
+            'locale' => 'en',
+            'title' => 'X',
+            'slug' => 'unknown-type',
+            'status' => 'draft',
+            'is_homepage' => false,
+            'html' => '',
+            'css' => '',
+            'components_json' => $tree,
+            'seo' => ['en' => []],
+        ])->assertStatus(422)
+          ->assertJsonValidationErrors('components_json');
+});
+
+it('update accepts an empty component tree (no components yet)', function () {
+    $page = BuilderPage::factory()->create(['type' => 'page', 'slug' => 'empty-tree']);
+    $page->translations()->create(['locale' => 'en', 'title' => 'X', 'html' => '', 'css' => '']);
+    $page->seo()->create(['locale' => 'en']);
+
+    $this->actingAs($this->admin)
+        ->putJson(route('admin.builder.update', $page->id), [
+            'locale' => 'en',
+            'title' => 'X',
+            'slug' => 'empty-tree',
+            'status' => 'draft',
+            'is_homepage' => false,
+            'html' => '',
+            'css' => '',
+            'components_json' => [],
+            'seo' => ['en' => []],
+        ])->assertOk();
 });

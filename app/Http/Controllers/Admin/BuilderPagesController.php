@@ -7,11 +7,13 @@ use App\Models\BuilderPage;
 use App\Models\MediaItem;
 use App\Support\HtmlSanitizer;
 use App\Support\LocaleResolver;
+use App\Support\WidgetRegistry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -121,6 +123,7 @@ class BuilderPagesController extends Controller
 
         $config = [
             'csrf' => csrf_token(),
+            'canvas_css_url' => Vite::asset('resources/css/app.css'),
             'page' => [
                 'id' => $page->id,
                 'type' => $page->type,
@@ -186,7 +189,23 @@ class BuilderPagesController extends Controller
             'is_homepage' => ['sometimes', 'boolean'],
             'html' => ['nullable', 'string'],
             'css' => ['nullable', 'string'],
-            'components_json' => ['nullable', 'array'],
+            'components_json' => [
+                'nullable',
+                'array',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (! is_array($value)) {
+                        return;
+                    }
+                    if (WidgetRegistry::hasInvalidRoots($value)) {
+                        $fail('Page root must contain only mp-section components.');
+                        return;
+                    }
+                    $unknown = WidgetRegistry::unknownTypesIn($value);
+                    if (! empty($unknown)) {
+                        $fail('Unknown component types: ' . implode(', ', $unknown));
+                    }
+                },
+            ],
             'styles_json' => ['nullable', 'array'],
             'seo' => ['sometimes', 'array'],
             'seo.*.meta_title' => ['nullable', 'string', 'max:255'],

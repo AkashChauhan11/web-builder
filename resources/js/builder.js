@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
         },
         canvas: {
-            scripts: ['https://cdn.tailwindcss.com'],
+            styles: config.canvas_css_url ? [config.canvas_css_url] : [],
+            scripts: [], // tailwindcss cdn was here for plan 2; drop it — we now use compiled Tailwind via canvas_css_url
         },
         assetManager: {
             upload: config.urls.upload,
