@@ -17,7 +17,7 @@ class AdminUserSeeder extends Seeder
             return;
         }
 
-        $password = Str::random(16);
+        $password = 'password'; // You can change this to a more secure password or generate one dynamically
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.test',

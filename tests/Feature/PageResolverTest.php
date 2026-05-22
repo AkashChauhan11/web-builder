@@ -127,3 +127,22 @@ it('emits hreflang alternates for all translations', function () {
     $resp->assertSee('hreflang="en"', false);
     $resp->assertSee('hreflang="es"', false);
 });
+
+it('renders page without an SEO row using sensible defaults', function () {
+    $home = BuilderPage::create([
+        'type' => 'page', 'is_homepage' => true, 'status' => 'published', 'published_at' => now(),
+    ]);
+    $home->translations()->create([
+        'locale' => 'en',
+        'title' => 'Page Title Used As Fallback',
+        'html' => '<p>body</p>',
+        'css' => '',
+    ]);
+    // NOTE: deliberately no $home->seo()->create(...) — this is the bug scenario.
+
+    $resp = $this->get('/');
+    $resp->assertOk()
+        ->assertSee('Page Title Used As Fallback', false)  // falls back to translation title in <title>
+        ->assertSee('<p>body</p>', false)
+        ->assertSee('content="index,follow"', false);       // default robots applied
+});

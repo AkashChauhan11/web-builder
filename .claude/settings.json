@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\tools\\\\htdocs\\\\web-editor\\\\app\\\\Http\\\\Middleware\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\tools\\\\htdocs\\\\web-editor\\\\app\\\\Http\\\\Controllers\\\\Admin\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\tools\\\\htdocs\\\\web-editor\\\\resources\\\\views\\\\layouts\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\tools\\\\htdocs\\\\web-editor\\\\resources\\\\views\\\\admin\\\\auth\")",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8765/admin/login\" -UseBasicParsing -ErrorAction Stop; Write-Host \"Status: $\\($r.StatusCode\\)\"; $r.Content | Select-String \"Sign In\" | Select-Object -First 3)",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8765/admin\" -UseBasicParsing -MaximumRedirection 0 -ErrorAction SilentlyContinue; Write-Host \"Status: $\\($r.StatusCode\\)\"; Write-Host \"Location: $\\($r.Headers.Location\\)\")",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8765/admin\" -UseBasicParsing -MaximumRedirection 0 -ErrorAction SilentlyContinue; Write-Host \"StatusCode via exception: $\\(if \\($_.Exception.Response\\) { $_.Exception.Response.StatusCode.value__ } else { 'unknown' }\\)\"; $r)",
+      "PowerShell($resp = try { Invoke-WebRequest -Uri \"http://127.0.0.1:8765/admin\" -UseBasicParsing -MaximumRedirection 0 -ErrorAction Stop } catch { $_.Exception.Response }; Write-Host \"StatusCode: $\\($resp.StatusCode.value__\\)\"; Write-Host \"Location: $\\($resp.Headers['Location']\\)\")",
+      "PowerShell(try { Invoke-WebRequest -Uri \"http://127.0.0.1:8765/admin\" -UseBasicParsing -MaximumRedirection 0 } catch [System.Net.WebException] { $code = [int]$_.Exception.Response.StatusCode; $loc = $_.Exception.Response.Headers['Location']; Write-Host \"Status: $code\"; Write-Host \"Location: $loc\" })",
+      "Bash(Start-Process -FilePath \"php\" -ArgumentList \"artisan\",\"serve\" -WindowStyle Hidden -PassThru)",
+      "Bash(Write-Host \"Server started\")"
+    ]
+  }
+}

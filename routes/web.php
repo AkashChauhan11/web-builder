@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BuilderPagesController;
+use App\Http\Controllers\Admin\LanguagesController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -25,8 +28,15 @@ Route::middleware(['auth', 'admin'])
         Route::get('/builder', [BuilderPagesController::class, 'index'])->name('builder.index');
         Route::get('/builder/create', [BuilderPagesController::class, 'create'])->name('builder.create');
         Route::post('/builder', [BuilderPagesController::class, 'store'])->name('builder.store');
+        Route::get('/builder/{id}/edit', [BuilderPagesController::class, 'edit'])->name('builder.edit');
         Route::delete('/builder/{id}', [BuilderPagesController::class, 'destroy'])->name('builder.destroy');
-        // edit/update/publish/uploadAsset are added in Plan 2
+        Route::post('/builder/assets', [BuilderPagesController::class, 'uploadAsset'])->name('builder.upload_asset');
+        Route::put('/builder/{id}', [BuilderPagesController::class, 'update'])->name('builder.update');
+        Route::post('/builder/{id}/publish', [BuilderPagesController::class, 'publish'])->name('builder.publish');
+        Route::get('/media/picker', [MediaController::class, 'picker'])->name('media.picker');
+        Route::resource('media', MediaController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('users', UsersController::class)->except(['show']);
+        Route::resource('languages', LanguagesController::class)->except(['show']);
     });
 
 // ---- Frontend ----

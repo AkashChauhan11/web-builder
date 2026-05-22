@@ -1,0 +1,103 @@
+<h2>Section &amp; Column model</h2>
+<p class="subtitle">A few sub-decisions about how the primary layout primitive should work. Pick one from each group, or tell me in terminal.</p>
+
+<h3 style="margin-top:24px">A. How wide can a Section go?</h3>
+
+<div class="split" style="margin-top:8px">
+  <div class="mockup">
+    <div class="mockup-header">A1 &mdash; Section has Boxed / Full-width toggle (Elementor)</div>
+    <div class="mockup-body" style="background:#e2e8f0;padding:12px">
+      <div style="background:#dc2626;color:white;padding:8px;text-align:center;font-size:11px;margin-bottom:8px">Full-width section (edge to edge)</div>
+      <div style="display:flex;justify-content:center"><div style="background:#0f172a;color:white;padding:8px;width:60%;text-align:center;font-size:11px">Boxed section (max 1200px)</div></div>
+      <div style="font-size:10px;color:#475569;margin-top:8px">Each section has a width property: <b>Boxed</b> (max-width + auto margins, content stays centered) or <b>Full</b> (100vw, bleeds to viewport edges &mdash; great for backgrounds).</div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">A2 &mdash; Single max-width, page-level only</div>
+    <div class="mockup-body" style="background:#e2e8f0;padding:12px">
+      <div style="display:flex;justify-content:center;margin-bottom:6px"><div style="background:#475569;color:white;padding:8px;width:75%;text-align:center;font-size:11px">All sections boxed to 1200px</div></div>
+      <div style="display:flex;justify-content:center"><div style="background:#475569;color:white;padding:8px;width:75%;text-align:center;font-size:11px">No per-section width control</div></div>
+      <div style="font-size:10px;color:#475569;margin-top:8px">Simpler. But you lose the ability to do dark full-width hero sections with boxed content. Less Elementor-like.</div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:32px">B. Column structures</h3>
+
+<div class="split" style="margin-top:8px">
+  <div class="mockup">
+    <div class="mockup-header">B1 &mdash; Preset structures (Elementor)</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;font-size:10px;color:#475569">
+      <div style="margin-bottom:6px">When you add a Section, you pick from preset column layouts:</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="background:#3b82f6;height:18px"></div><div style="margin-top:3px">1</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">1/2 + 1/2</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">1/3 &times; 3</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">1/4 &times; 4</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:2"></div></div><div style="margin-top:3px">1/3 + 2/3</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:2"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">2/3 + 1/3</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:2"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">1/4 + 1/2 + 1/4</div></div>
+        <div style="background:white;border:1px solid #cbd5e1;padding:6px;text-align:center"><div style="display:flex;gap:2px"><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div><div style="background:#3b82f6;height:18px;flex:1"></div></div><div style="margin-top:3px">1/6 &times; 6</div></div>
+      </div>
+      <div style="margin-top:10px">Drag column edges to adjust ratios afterward. Max 6 columns per section.</div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">B2 &mdash; Free-form (add/remove columns)</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;font-size:10px;color:#475569">
+      <div>You add a Section (single column by default), then click &ldquo;+&rdquo; to add another column. Drag column edges to size them.</div>
+      <div style="margin-top:8px;display:flex;gap:4px;align-items:stretch">
+        <div style="background:#3b82f6;height:30px;flex:1;color:white;text-align:center;font-size:9px;padding-top:9px">col</div>
+        <div style="background:#3b82f6;height:30px;flex:1;color:white;text-align:center;font-size:9px;padding-top:9px">col</div>
+        <div style="background:#94a3b8;height:30px;width:18px;color:white;text-align:center;font-size:11px;padding-top:6px">+</div>
+      </div>
+      <div style="margin-top:10px">More flexible. Slower for common layouts (which is most of the time).</div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:32px">C. Inner sections (nesting)</h3>
+
+<div class="split" style="margin-top:8px">
+  <div class="mockup">
+    <div class="mockup-header">C1 &mdash; Yes, &ldquo;Inner Section&rdquo; widget (Elementor)</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;font-size:10px;color:#475569">
+      A column can contain an Inner Section, which itself has columns. Lets you build complex layouts (e.g. column with image on top + two columns of text below). Adds complexity but unlocks real Elementor-style designs.
+      <div style="margin-top:8px;padding:6px;border:2px solid #94a3b8;border-style:dashed">SECTION
+        <div style="display:flex;gap:4px;margin-top:4px">
+          <div style="flex:1;border:1px solid #cbd5e1;padding:6px;background:white">column</div>
+          <div style="flex:1;border:1px solid #cbd5e1;padding:6px;background:white">column
+            <div style="margin-top:4px;border:2px dashed #3b82f6;padding:4px;background:#dbeafe">INNER SECTION
+              <div style="display:flex;gap:2px;margin-top:2px">
+                <div style="flex:1;background:white;padding:3px;font-size:9px">col</div>
+                <div style="flex:1;background:white;padding:3px;font-size:9px">col</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">C2 &mdash; No nesting (flat sections only)</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;font-size:10px;color:#475569">
+      Sections are flat siblings. Simpler model, easier to teach, fewer edge cases. You can still get most layouts by chaining sections, but complex split layouts inside one column become impossible.
+      <div style="margin-top:8px">
+        <div style="margin-bottom:4px;padding:6px;border:2px dashed #94a3b8">SECTION 1</div>
+        <div style="margin-bottom:4px;padding:6px;border:2px dashed #94a3b8">SECTION 2</div>
+        <div style="padding:6px;border:2px dashed #94a3b8">SECTION 3</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:28px" data-multiselect>
+  <div class="option" data-choice="A1" onclick="toggleSelect(this)"><div class="letter">A1</div><div class="content"><h3>Per-section Boxed/Full toggle</h3><p>Recommended &mdash; canonical Elementor behavior</p></div></div>
+  <div class="option" data-choice="A2" onclick="toggleSelect(this)"><div class="letter">A2</div><div class="content"><h3>Single page-level max-width</h3><p>Simpler, less flexible</p></div></div>
+  <div class="option" data-choice="B1" onclick="toggleSelect(this)"><div class="letter">B1</div><div class="content"><h3>Preset structures + draggable</h3><p>Recommended &mdash; canonical Elementor behavior</p></div></div>
+  <div class="option" data-choice="B2" onclick="toggleSelect(this)"><div class="letter">B2</div><div class="content"><h3>Free-form add/remove</h3><p>More flexible, slower for common cases</p></div></div>
+  <div class="option" data-choice="C1" onclick="toggleSelect(this)"><div class="letter">C1</div><div class="content"><h3>Inner Sections allowed</h3><p>Recommended &mdash; needed for complex layouts</p></div></div>
+  <div class="option" data-choice="C2" onclick="toggleSelect(this)"><div class="letter">C2</div><div class="content"><h3>No nesting</h3><p>Simpler but limits real designs</p></div></div>
+</div>
+
+<p class="subtitle" style="margin-top:20px"><b>My recommendation:</b> A1 + B1 + C1 &mdash; the canonical Elementor model. Adds maybe 4-5 days to Phase A but it's why people pick Elementor in the first place. Doing this differently means you've built a different thing.</p>

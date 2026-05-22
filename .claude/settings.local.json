@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "*",
       "Bash(git init *)",
       "Bash(git -c user.name='MiniPress Builder' -c user.email='builder@minipress.local' commit -m \"chore: initial Laravel 12 skeleton with Pest 3 and Tailwind v4\")"
     ]

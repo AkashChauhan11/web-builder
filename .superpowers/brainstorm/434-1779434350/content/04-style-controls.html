@@ -1,0 +1,118 @@
+<h2>How should the style controls work?</h2>
+<p class="subtitle">Your existing blocks use Tailwind utility classes. Elementor uses continuous CSS values. This decision shapes the entire style panel UI and what gets saved.</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">Option 1 &mdash; Tailwind preset controls</div>
+    <div class="mockup-body" style="font-size:11px;padding:12px;background:#f8fafc">
+      <div style="font-weight:600;margin-bottom:8px">Typography</div>
+      <div style="margin-bottom:6px">Size
+        <select style="width:100%;padding:4px;margin-top:2px">
+          <option>sm (14px)</option>
+          <option>base (16px)</option>
+          <option selected>lg (18px)</option>
+          <option>xl (20px)</option>
+          <option>2xl (24px)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px">Weight
+        <select style="width:100%;padding:4px;margin-top:2px">
+          <option>normal</option>
+          <option selected>semibold</option>
+          <option>bold</option>
+        </select>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px">Spacing</div>
+      <div style="margin-bottom:6px">Padding Y
+        <div style="display:flex;gap:2px;margin-top:2px">
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">0</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">4</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">8</div>
+          <div style="flex:1;padding:4px;background:#3b82f6;color:white;border:1px solid #3b82f6;text-align:center">12</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">16</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">20</div>
+        </div>
+      </div>
+      <div style="font-weight:600;margin:10px 0 8px">Background</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">
+        <div style="aspect-ratio:1;background:#0f172a;border-radius:3px"></div>
+        <div style="aspect-ratio:1;background:#1e293b;border-radius:3px"></div>
+        <div style="aspect-ratio:1;background:#475569;border-radius:3px;border:2px solid #3b82f6"></div>
+        <div style="aspect-ratio:1;background:#64748b;border-radius:3px"></div>
+        <div style="aspect-ratio:1;background:#3b82f6;border-radius:3px"></div>
+        <div style="aspect-ratio:1;background:#16a34a;border-radius:3px"></div>
+        <div style="aspect-ratio:1;background:#dc2626;border-radius:3px"></div>
+      </div>
+      <div style="margin-top:10px;padding:6px;background:#dcfce7;font-family:monospace;font-size:9px;color:#14532d">class="text-lg font-semibold py-12 bg-slate-500"</div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Option 2 &mdash; Elementor-style continuous</div>
+    <div class="mockup-body" style="font-size:11px;padding:12px;background:#f8fafc">
+      <div style="font-weight:600;margin-bottom:8px">Typography</div>
+      <div style="margin-bottom:6px">Size
+        <div style="display:flex;gap:4px;align-items:center;margin-top:2px">
+          <input type="range" style="flex:1" value="18">
+          <input style="width:50px;padding:3px;border:1px solid #cbd5e1" value="18">
+          <select style="padding:3px;border:1px solid #cbd5e1"><option>px</option><option>em</option><option>rem</option></select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">Weight
+        <div style="display:flex;gap:2px;margin-top:2px">
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">3</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">4</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">5</div>
+          <div style="flex:1;padding:4px;background:#3b82f6;color:white;border:1px solid #3b82f6;text-align:center">6</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">7</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">8</div>
+          <div style="flex:1;padding:4px;background:white;border:1px solid #cbd5e1;text-align:center">9</div>
+        </div>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px">Padding <span style="font-weight:400;color:#94a3b8;font-size:10px">[&#128279;] linked</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:10px">
+        <div>Top<input style="width:100%;padding:3px;border:1px solid #cbd5e1" value="48"></div>
+        <div>Right<input style="width:100%;padding:3px;border:1px solid #cbd5e1" value="24"></div>
+        <div>Bottom<input style="width:100%;padding:3px;border:1px solid #cbd5e1" value="48"></div>
+        <div>Left<input style="width:100%;padding:3px;border:1px solid #cbd5e1" value="24"></div>
+      </div>
+      <div style="font-weight:600;margin-bottom:8px">Background</div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <div style="width:24px;height:24px;background:#475569;border-radius:3px;border:1px solid #cbd5e1"></div>
+        <input style="flex:1;padding:3px;border:1px solid #cbd5e1;font-family:monospace" value="#475569">
+      </div>
+      <div style="margin-top:10px;padding:6px;background:#dbeafe;font-family:monospace;font-size:9px;color:#1e3a8a">style="font-size:18px;font-weight:600;padding:48px 24px;background:#475569"</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="options" style="margin-top:24px">
+  <div class="option" data-choice="presets" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>Tailwind preset controls (recommended)</h3>
+      <p><b>Pro:</b> Output is pure Tailwind classes &mdash; consistent with existing blocks, no &lt;style&gt; blocks needed, fast pages. Per-breakpoint &ldquo;just works&rdquo; (<code>md:py-12</code>). UI is faster to build (no sliders, no unit logic).<br>
+      <b>Con:</b> Discrete values only (can't pick 27px padding). For most marketing pages this is fine; designers may want more.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="continuous" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>Elementor-style continuous values</h3>
+      <p><b>Pro:</b> Pixel-perfect control. Truly feels like Elementor.<br>
+      <b>Con:</b> Output is inline <code>style=""</code> attributes that fight Tailwind specificity. Per-breakpoint requires &lt;style&gt; blocks with media queries. Existing Tailwind blocks would need to either be migrated to inline CSS or coexist messily. ~2&times; the implementation work for the style panel.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>Hybrid &mdash; Tailwind presets + arbitrary values</h3>
+      <p>Default UI shows preset chips (sm/md/lg). A small &ldquo;custom&rdquo; toggle next to each control lets you type any value &mdash; emits Tailwind arbitrary value <code>py-[27px]</code> instead of inline CSS. Continuous when you need it, clean utility classes otherwise. Most flexible.<br>
+      <b>Con:</b> A bit more UI to build than Option 1. But arbitrary values stay in the Tailwind world &mdash; no inline <code>style=""</code> attributes, no mixed model.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:20px"><b>Strong recommendation:</b> Option 3. You get the continuous control Elementor users expect, the output stays pure Tailwind (no <code>&lt;style&gt;</code> blocks, no specificity wars), and the existing Hero/CTA/etc. blocks keep working unchanged.</p>

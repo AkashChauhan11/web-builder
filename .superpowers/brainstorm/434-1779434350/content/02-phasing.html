@@ -1,0 +1,80 @@
+<h2>Proposed phasing</h2>
+<p class="subtitle">All 8 features in one plan is too big to build safely. Here's a phased breakdown. We'd brainstorm and ship Phase A first, then come back for B, then C. Each phase delivers a usable editor — you're never stuck mid-feature.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="phase-a-first" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:white;padding:24px;min-height:120px">
+      <div style="font-size:11px;letter-spacing:.1em;opacity:.8">PHASE A &mdash; FOUNDATION</div>
+      <div style="font-size:28px;font-weight:700;margin-top:4px">Feel like Elementor</div>
+      <div style="font-size:12px;opacity:.85;margin-top:8px">~3-4 weeks &middot; the biggest unlock</div>
+    </div>
+    <div class="card-body">
+      <h3>What ships</h3>
+      <ul style="font-size:13px;line-height:1.6;padding-left:18px;margin:8px 0">
+        <li><b>Section &rarr; Column &rarr; Widget</b> primitive</li>
+        <li><b>20 widgets</b>: Heading, Text, Image, Button, Icon, Icon Box, Divider, Spacer, Video, Accordion, Tabs, Counter, Progress Bar, Testimonial, Image Carousel, Gallery, Social Icons, Alert, HTML, Pricing Table</li>
+        <li><b>Inline WYSIWYG</b> text editing (click + type)</li>
+        <li><b>Rich style panel</b>: typography, color, bg (color/gradient/image), border, radius, 4-side padding/margin, shadow</li>
+        <li>Content / Style / Advanced tabs on every widget</li>
+      </ul>
+      <p style="font-size:12px;color:#64748b;margin-top:10px"><b>Out of phase A:</b> per-breakpoint values (preview only), template library, global styles, motion. Default values look good on mobile but you can't override yet.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="phase-b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#065f46,#10b981);color:white;padding:24px;min-height:120px">
+      <div style="font-size:11px;letter-spacing:.1em;opacity:.8">PHASE B &mdash; PRODUCTIVITY</div>
+      <div style="font-size:28px;font-weight:700;margin-top:4px">Build pages 10&times; faster</div>
+      <div style="font-size:12px;opacity:.85;margin-top:8px">~2-3 weeks &middot; after A is shipped</div>
+    </div>
+    <div class="card-body">
+      <h3>What ships</h3>
+      <ul style="font-size:13px;line-height:1.6;padding-left:18px;margin:8px 0">
+        <li><b>Per-breakpoint responsive values</b> (Tablet/Mobile overrides for padding, font-size, visibility, etc.)</li>
+        <li><b>Template library</b>: ~15 pre-built page templates (About, Pricing, Contact, Landing, Blog Post, etc.) + ~25 block templates (Hero variants, CTAs, etc.). Save your own as templates.</li>
+        <li><b>Global styles</b>: 6 site colors + 4 typography presets (H1-H4, Body). Widgets reference these by default.</li>
+      </ul>
+      <p style="font-size:12px;color:#64748b;margin-top:10px"><b>Requires:</b> Phase A complete, since templates are just saved Section/Widget JSON.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="phase-c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(135deg,#7c2d12,#f59e0b);color:white;padding:24px;min-height:120px">
+      <div style="font-size:11px;letter-spacing:.1em;opacity:.8">PHASE C &mdash; POLISH</div>
+      <div style="font-size:28px;font-weight:700;margin-top:4px">Make it sing</div>
+      <div style="font-size:12px;opacity:.85;margin-top:8px">~2 weeks &middot; after B is shipped</div>
+    </div>
+    <div class="card-body">
+      <h3>What ships</h3>
+      <ul style="font-size:13px;line-height:1.6;padding-left:18px;margin:8px 0">
+        <li><b>Entrance animations</b>: fade, slide, zoom, on-scroll reveal</li>
+        <li><b>Hover states</b>: hover styles + transitions on every widget</li>
+        <li><b>Advanced widgets</b>: Form builder (with email submission), Google Map, Star Rating, custom Shortcode</li>
+        <li><b>Motion effects</b>: simple parallax, sticky elements</li>
+      </ul>
+      <p style="font-size:12px;color:#64748b;margin-top:10px">Optional &mdash; the editor is fully usable without Phase C.</p>
+    </div>
+  </div>
+
+</div>
+
+<h3 style="margin-top:32px">Does this phasing work?</h3>
+<p class="subtitle">Click a card if you agree the phasing makes sense. Or tell me in terminal: <i>"merge B into A"</i>, <i>"skip C entirely"</i>, <i>"different split"</i>, etc.</p>
+
+<div class="options" style="margin-top:16px">
+  <div class="option" data-choice="agree" onclick="toggleSelect(this)">
+    <div class="letter">&#10003;</div>
+    <div class="content">
+      <h3>Phasing looks good &mdash; brainstorm Phase A in detail</h3>
+      <p>I'll spend the rest of this conversation designing Phase A only. Phases B and C get their own brainstorm sessions later, when you're ready to start them.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="reshuffle" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Different phasing</h3>
+      <p>Tell me in terminal how you'd split it.</p>
+    </div>
+  </div>
+</div>

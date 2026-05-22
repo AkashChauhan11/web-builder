@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BuilderPage extends Model
 {
+    /** @use HasFactory<\Database\Factories\BuilderPageFactory> */
+    use HasFactory;
+
     public const TYPE_PAGE = 'page';
     public const TYPE_HEADER = 'header';
     public const TYPE_FOOTER = 'footer';

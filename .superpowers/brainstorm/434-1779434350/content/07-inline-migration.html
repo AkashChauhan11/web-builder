@@ -1,0 +1,53 @@
+<h2>Last two things</h2>
+<p class="subtitle">Inline editing scope + what to do with existing pages.</p>
+
+<h3 style="margin-top:24px">D. Which widgets get inline (click-and-type) editing?</h3>
+
+<div class="options" style="margin-top:8px" data-multiselect>
+  <div class="option" data-choice="inline-minimal" onclick="toggleSelect(this)">
+    <div class="letter">D1</div>
+    <div class="content">
+      <h3>Minimal: Heading, Text Editor, Button label only</h3>
+      <p>The three obvious ones. Everything else (Testimonial quote, Pricing features, Alert message, Icon Box title/text) you edit via the style panel's Content tab using normal form fields. Faster to build.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="inline-full" onclick="toggleSelect(this)">
+    <div class="letter">D2</div>
+    <div class="content">
+      <h3>Full: every text-bearing widget supports inline edit</h3>
+      <p>Heading, Text, Button, Icon Box title/desc, Testimonial quote/author, Pricing title/price/feature rows, Alert message. More work (each widget needs editable-region markup + RTE wiring) but feels much more Elementor-like.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:8px"><b>Recommendation:</b> D2. Inline editing is one of the main reasons people choose Elementor over GrapesJS. Worth the extra ~3 days.</p>
+
+<h3 style="margin-top:32px">E. What happens to pages that already exist?</h3>
+
+<p class="subtitle">Your seeders create a few placeholder pages. The existing 4 custom blocks output Tailwind-class HTML &mdash; that HTML is stored in <code>builder_page_translations.html</code>. With Option 2 (continuous CSS style panel) and a new Section/Column primitive, those old pages don't match the new model.</p>
+
+<div class="options" style="margin-top:8px">
+  <div class="option" data-choice="reset" onclick="toggleSelect(this)">
+    <div class="letter">E1</div>
+    <div class="content">
+      <h3>Reset seed data &mdash; rebuild seeded pages with new widgets</h3>
+      <p>Update seeders to author the Welcome / placeholder pages using the new Section/Column/Widget JSON. Run <code>migrate:fresh --seed</code> and you're done. <b>Best for early-stage projects</b> &mdash; you don't have real content yet. Simplest path.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="coexist" onclick="toggleSelect(this)">
+    <div class="letter">E2</div>
+    <div class="content">
+      <h3>Coexist &mdash; old pages render as legacy HTML, edit in new builder when ready</h3>
+      <p>Existing translations with raw HTML keep rendering as-is via the public PageController (the rendered output doesn't change). When you open such a page in the new editor, it loads into a single "Legacy HTML" wrapper widget. You can leave it or rebuild section-by-section. <b>Best if you have real published content you don't want to break.</b></p>
+    </div>
+  </div>
+  <div class="option" data-choice="auto-migrate" onclick="toggleSelect(this)">
+    <div class="letter">E3</div>
+    <div class="content">
+      <h3>Auto-migrate old HTML &rarr; new component tree</h3>
+      <p>One-time migration parses each translation's HTML and converts it into a best-effort Section/Column/Widget tree (Hero block &rarr; Section with Heading + Text + Button widgets, etc.). <b>Brittle</b> &mdash; works for the 4 known blocks, fails for arbitrary content. Significant extra work for limited return.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:8px"><b>Recommendation:</b> E1. The project is young, seeded pages are placeholders, you'll get a clean slate. If you've published real content to clients, switch to E2.</p>

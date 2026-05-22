@@ -1,0 +1,62 @@
+<h2>Phase A widget roster</h2>
+<p class="subtitle">Here's the proposed 20 widgets for Phase A. The 4 existing blocks (Hero, Two-Col, CTA, Feature Grid) get rebuilt as <i>template Sections</i> (since they're really "section + column + widgets" compositions, not atomic widgets). Click any widget below to deselect it from Phase A &mdash; click again to re-select. Or just tell me in terminal: "add X", "drop Y", "save Z for phase B".</p>
+
+<style>
+.wgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
+.w{background:white;border:1px solid #cbd5e1;border-radius:6px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
+.w:hover{border-color:#94a3b8;background:#f8fafc}
+.w.dropped{opacity:.35;background:#fee2e2;border-color:#fca5a5;text-decoration:line-through}
+.w .icon{font-size:22px;margin-bottom:6px;display:block}
+.w .name{font-size:11px;font-weight:600}
+.w .desc{font-size:9px;color:#64748b;margin-top:2px}
+.cat{font-size:10px;letter-spacing:.1em;color:#475569;font-weight:700;margin-top:24px;margin-bottom:4px}
+.cat:first-of-type{margin-top:8px}
+</style>
+
+<div class="cat">CONTENT (8)</div>
+<div class="wgrid">
+  <div class="option w" data-choice="heading" onclick="this.classList.toggle('dropped')"><span class="icon">H</span><div class="name">Heading</div><div class="desc">H1-H6, inline editable</div></div>
+  <div class="option w" data-choice="text" onclick="this.classList.toggle('dropped')"><span class="icon">&para;</span><div class="name">Text Editor</div><div class="desc">Rich text, inline editable</div></div>
+  <div class="option w" data-choice="image" onclick="this.classList.toggle('dropped')"><span class="icon">&#128247;</span><div class="name">Image</div><div class="desc">From media library</div></div>
+  <div class="option w" data-choice="button" onclick="this.classList.toggle('dropped')"><span class="icon">&#9658;</span><div class="name">Button</div><div class="desc">Inline label, link, size</div></div>
+  <div class="option w" data-choice="icon" onclick="this.classList.toggle('dropped')"><span class="icon">&#9733;</span><div class="name">Icon</div><div class="desc">Lucide icon set</div></div>
+  <div class="option w" data-choice="icon-box" onclick="this.classList.toggle('dropped')"><span class="icon">&#9636;</span><div class="name">Icon Box</div><div class="desc">Icon + heading + text</div></div>
+  <div class="option w" data-choice="divider" onclick="this.classList.toggle('dropped')"><span class="icon">&mdash;</span><div class="name">Divider</div><div class="desc">HR with style options</div></div>
+  <div class="option w" data-choice="spacer" onclick="this.classList.toggle('dropped')"><span class="icon">&#8597;</span><div class="name">Spacer</div><div class="desc">Vertical empty space</div></div>
+</div>
+
+<div class="cat">MEDIA (3)</div>
+<div class="wgrid">
+  <div class="option w" data-choice="video" onclick="this.classList.toggle('dropped')"><span class="icon">&#9658;</span><div class="name">Video</div><div class="desc">YouTube / Vimeo / MP4</div></div>
+  <div class="option w" data-choice="carousel" onclick="this.classList.toggle('dropped')"><span class="icon">&#10095;</span><div class="name">Image Carousel</div><div class="desc">Slider with arrows + dots</div></div>
+  <div class="option w" data-choice="gallery" onclick="this.classList.toggle('dropped')"><span class="icon">&#9646;</span><div class="name">Image Gallery</div><div class="desc">Grid with lightbox</div></div>
+</div>
+
+<div class="cat">INTERACTIVE (3)</div>
+<div class="wgrid">
+  <div class="option w" data-choice="accordion" onclick="this.classList.toggle('dropped')"><span class="icon">&#8801;</span><div class="name">Accordion</div><div class="desc">Expandable Q&amp;A items</div></div>
+  <div class="option w" data-choice="tabs" onclick="this.classList.toggle('dropped')"><span class="icon">&#9647;</span><div class="name">Tabs</div><div class="desc">Tabbed content panels</div></div>
+  <div class="option w" data-choice="counter" onclick="this.classList.toggle('dropped')"><span class="icon">#</span><div class="name">Counter</div><div class="desc">Animated number counter</div></div>
+</div>
+
+<div class="cat">SOCIAL PROOF (3)</div>
+<div class="wgrid">
+  <div class="option w" data-choice="testimonial" onclick="this.classList.toggle('dropped')"><span class="icon">&#10077;</span><div class="name">Testimonial</div><div class="desc">Quote + author + avatar</div></div>
+  <div class="option w" data-choice="pricing" onclick="this.classList.toggle('dropped')"><span class="icon">$</span><div class="name">Pricing Table</div><div class="desc">Plan card with features</div></div>
+  <div class="option w" data-choice="social" onclick="this.classList.toggle('dropped')"><span class="icon">&#9787;</span><div class="name">Social Icons</div><div class="desc">FB/X/IG/LinkedIn etc.</div></div>
+</div>
+
+<div class="cat">UTILITY (3)</div>
+<div class="wgrid">
+  <div class="option w" data-choice="progress" onclick="this.classList.toggle('dropped')"><span class="icon">&#9608;</span><div class="name">Progress Bar</div><div class="desc">Skill bar / metric bar</div></div>
+  <div class="option w" data-choice="alert" onclick="this.classList.toggle('dropped')"><span class="icon">&#9888;</span><div class="name">Alert</div><div class="desc">Info/success/warn/error</div></div>
+  <div class="option w" data-choice="html" onclick="this.classList.toggle('dropped')"><span class="icon">&lt;/&gt;</span><div class="name">HTML</div><div class="desc">Raw HTML escape hatch</div></div>
+</div>
+
+<div style="margin-top:32px;padding:14px;background:#fef3c7;border:1px solid #fbbf24;border-radius:6px;font-size:12px;color:#78350f">
+  <b>Saved for Phase B/C:</b> Form Builder (needs validation + email backend &mdash; deserves its own design), Google Map (needs API key wiring), Star Rating, Shortcode/dynamic content (Phase B with global styles).
+</div>
+
+<div style="margin-top:14px;padding:14px;background:#dbeafe;border:1px solid #93c5fd;border-radius:6px;font-size:12px;color:#1e3a8a">
+  <b>The existing 4 blocks become "starter Section templates":</b> Hero, Two-Column, CTA Banner, Feature Grid &mdash; each rebuilt as a Section + Columns + the new widgets, so you can drop them in as a starting point and customize via the style panel.
+</div>

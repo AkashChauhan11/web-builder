@@ -1,59 +1,152 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MiniPress
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A WordPress-style CMS built on **Laravel 12** with a **GrapesJS** visual editor. Plain server-rendered Blade — no Inertia, no Livewire, no SPA frameworks.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Visual editor** — GrapesJS canvas with custom Tailwind blocks (Hero, Two Column, CTA, Feature Grid), live device preview (desktop/tablet/mobile), debounced auto-save.
+- **Per-locale content** — `builder_pages` with translation + SEO rows per language. Switch locales without losing work.
+- **WordPress concepts**, mapped:
+  - Posts/Pages → `builder_pages` rows with `type ∈ {page, header, footer}`
+  - The Loop → `Frontend\PageController` resolves `/{locale?}/{slug?}`
+  - Theme parts → `type = header` and `type = footer` rows
+  - WPML/Polylang → per-locale translations
+  - Yoast SEO → per-locale SEO rows (meta/OG/JSON-LD)
+- **Auth** — Laravel sessions; three roles (admin / developer / editor). Admin-only user management.
+- **Media library** — drag-drop upload, alt-text, JSON picker endpoint for the editor.
+- **Sitemap + hreflang** — `/sitemap.xml` lists every published page × translation with hreflang alternates; observer-driven cache invalidation.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+, Laravel 12
+- MySQL 8 / MariaDB 10.6+ in production; SQLite `:memory:` for tests
+- Pest 3
+- Vite 7 + Tailwind CSS v4 (`@tailwindcss/vite`)
+- GrapesJS 0.22 + preset-webpage / blocks-basic / custom-code / style-bg
+- Coloris 0.25 for color pickers
 
-## Learning Laravel
+## Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+composer setup
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+This:
+1. Installs PHP and JS dependencies
+2. Copies `.env.example` to `.env` and generates an app key
+3. Runs migrations + seeders
+4. Builds assets
 
-## Laravel Sponsors
+After setup completes, the seeder prints a **random admin password** to the console. Note it — you'll need it to log in. Email is `admin@example.test`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+If you prefer to do the steps manually:
 
-### Premium Partners
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan storage:link
+npm run build
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Local Dev
 
-## Contributing
+```bash
+composer dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Runs `php artisan serve`, `php artisan queue:listen`, and `npm run dev` concurrently.
 
-## Code of Conduct
+Then:
+- Public site: http://127.0.0.1:8000/
+- Spanish site: http://127.0.0.1:8000/es
+- Sitemap: http://127.0.0.1:8000/sitemap.xml
+- Admin: http://127.0.0.1:8000/admin/login
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Running Tests
 
-## Security Vulnerabilities
+```bash
+composer test
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Uses SQLite `:memory:` (configured in `phpunit.xml`). Should run in well under 5 seconds.
+
+## Domain Model
+
+- `users` — auth + role (`admin`/`developer`/`editor`)
+- `languages` — locales with active/default/sort_order flags
+- `builder_pages` — pages, headers, footers (single table, `type` discriminator)
+- `builder_page_translations` — per-locale title/html/css/components/styles
+- `builder_page_seo` — per-locale meta/og/canonical/robots/JSON-LD
+- `media` — uploaded files (filename, mime, size, path, url, alt_text, uploaded_by)
+
+## Architecture Notes
+
+### URL Routing
+
+The frontend uses two catch-all routes after the explicit `/`:
+- `GET /{first}` → 1 segment — if it's a known non-default locale, treat as locale homepage; else treat as a default-locale slug
+- `GET /{first}/{second}` → 2 segments — first must be a known locale, second is the slug
+
+Admin routes are explicit and registered BEFORE the catch-alls in `routes/web.php`, so route ordering matters.
+
+### Save Flow
+
+The editor sends a single `PUT /admin/builder/{id}` per save, with the entire payload (translation HTML/CSS/components/styles + all locales' SEO rows). The server:
+1. Validates against the slug regex and uniqueness rule
+2. Wraps the write in a DB transaction
+3. Runs the HTML through `HtmlSanitizer::stripDocumentWrappers` (removes `<html>`, `<head>`, `<body>`, and external `<script src="...">`)
+4. Upserts the translation by (page_id, locale)
+5. Upserts each SEO row by (page_id, locale)
+6. Bumps `published_at` if status flipped to `published` for the first time
+
+If the slug changed, the response includes `redirect_url`; the JS reloads the editor at the new URL.
+
+### Caching
+
+- The sitemap is cached for 1 hour under `builder.sitemap.xml`.
+- `BuilderPageObserver` and `BuilderPageTranslationObserver` invalidate that key on any save/delete.
+- `LocaleResolver` caches default/active language codes for 5 minutes; `LanguageObserver` busts those keys on language save/delete.
+
+### What's Intentionally Missing
+
+- No redirects table — slug changes 404 the old URL by design.
+- No Inertia/Livewire/SPA — the admin is server-rendered Blade. The editor is the only client-side-rich page; it loads as a single Vite bundle and does its work entirely in `resources/js/builder.js`.
+- No Breeze/Jetstream/Fortify — auth is hand-written (one controller + one middleware) to keep the surface area small.
+
+## Project Structure
+
+```
+app/
+  Http/
+    Controllers/
+      Admin/         BuilderPagesController, AuthController, UsersController, LanguagesController, MediaController
+      Frontend/      PageController, SitemapController
+    Middleware/      EnsureUserIsAdmin
+  Models/            User, Language, BuilderPage, BuilderPageTranslation, BuilderPageSeo, MediaItem
+  Observers/         BuilderPageObserver, BuilderPageTranslationObserver, LanguageObserver
+  Support/           HtmlSanitizer, LocaleResolver
+resources/
+  js/
+    builder.js       Editor entry — mounts GrapesJS, wires save flow + modals
+    builder/         blocks.js (4 custom blocks), coloris-init.js
+  views/
+    admin/           Admin Blade views (auth, builder, media, users, languages)
+    layouts/         admin.blade.php (admin shell), app.blade.php (public site)
+routes/
+  web.php
+database/
+  migrations/        users role, languages, media, builder_pages + translations + seo
+  factories/         User, BuilderPage, BuilderPageTranslation, MediaItem
+  seeders/           Languages, AdminUser (random password), PlaceholderPages
+tests/
+  Feature/           AdminAuth, BuilderPageCrud, BuilderAdmin, PageResolver, Sitemap, MediaCrud, UsersCrud, LanguagesCrud
+  Unit/              UserRole, HtmlSanitizer, LocaleResolver, LanguageObserver, BuilderPageObserver
+docs/superpowers/plans/   Implementation plans (1-4)
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT.

@@ -95,6 +95,8 @@ class PageController extends Controller
             ];
         }
 
+        $localePrefix = $locale === $default ? '' : '/' . $locale;
+
         return view('layouts.app', [
             'page' => $page,
             'translation' => $translation,
@@ -102,6 +104,7 @@ class PageController extends Controller
             'header' => $header,
             'footer' => $footer,
             'locale' => $locale,
+            'localePrefix' => $localePrefix,
             'alternates' => $alternates,
         ]);
     }

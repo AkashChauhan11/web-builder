@@ -50,8 +50,7 @@
                     </td>
                     <td class="p-3 text-slate-500">{{ $page->updated_at?->diffForHumans() }}</td>
                     <td class="p-3 text-right space-x-2">
-                        {{-- Edit lands in Plan 2 --}}
-                        <span class="text-slate-400 text-xs">edit comes in Plan 2</span>
+                        <a href="{{ route('admin.builder.edit', $page->id) }}" class="text-slate-700 hover:underline text-xs">Edit</a>
                         <form method="POST" action="{{ route('admin.builder.destroy', $page->id) }}" class="inline"
                               onsubmit="return confirm('Delete this {{ $page->type }}? This cascades translations and SEO.');">
                             @csrf
