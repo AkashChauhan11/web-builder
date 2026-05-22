@@ -43,14 +43,15 @@ export function mountStylePanel(editor, rootEl) {
         renderTabBody(body, currentTab, currentComponent, editor);
     }
 
-    editor.on('component:selected', (component) => {
-        currentComponent = component;
+    const syncSelection = () => {
+        currentComponent = editor.getSelected() || null;
         render();
-    });
-    editor.on('component:deselected', () => {
-        currentComponent = null;
-        render();
-    });
+    };
+
+    // GrapesJS fires `component:select` (verb form) when a component is selected.
+    // The `component:selected` past-participle constant exists in the source but is never triggered.
+    editor.on('component:select', syncSelection);
+    editor.on('component:deselected', syncSelection);
 
     render();
 }
