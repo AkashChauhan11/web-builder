@@ -6,7 +6,16 @@ import { initColoris, rebindColorisOnStyleChanges } from './builder/coloris-init
 import { registerSection } from './builder/sections/section.js';
 import { registerColumn } from './builder/sections/column.js';
 import { openSectionPicker } from './builder/sections/section-picker.js';
-import { mountStylePanel } from './builder/style-panel/index.js';
+import { mountStylePanel, registerStyleGroup, registerAdvancedGroup } from './builder/style-panel/index.js';
+import { typographyGroup } from './builder/style-panel/groups/typography.js';
+import { backgroundGroup } from './builder/style-panel/groups/background.js';
+import { borderGroup }  from './builder/style-panel/groups/border.js';
+import { shadowGroup }  from './builder/style-panel/groups/shadow.js';
+import { spacingGroup } from './builder/style-panel/groups/spacing.js';
+import { sizingGroup }  from './builder/style-panel/groups/sizing.js';
+import { layoutGroup }  from './builder/style-panel/groups/layout.js';
+import { fourSideInput } from './builder/controls/four-side-input.js';
+import { collapsibleGroup } from './builder/controls/collapsible-group.js';
 
 const SAVE_DEBOUNCE_MS = 5000;
 
@@ -61,6 +70,69 @@ document.addEventListener('DOMContentLoaded', () => {
     initColoris();
     rebindColorisOnStyleChanges(editor);
     mountStylePanel(editor, document.getElementById('mp-style-panel'));
+    registerStyleGroup(typographyGroup);
+    registerStyleGroup(backgroundGroup);
+    registerStyleGroup(layoutGroup);
+    registerStyleGroup(spacingGroup);
+    registerStyleGroup(sizingGroup);
+    registerStyleGroup(borderGroup);
+    registerStyleGroup(shadowGroup);
+
+    registerAdvancedGroup((component) => {
+        const style = component.getStyle();
+        const margin = fourSideInput({
+            values: {
+                top:    parseFloat(style['margin-top']) || 0,
+                right:  parseFloat(style['margin-right']) || 0,
+                bottom: parseFloat(style['margin-bottom']) || 0,
+                left:   parseFloat(style['margin-left']) || 0,
+            },
+            unit: 'px',
+            units: ['px', '%', 'em', 'rem'],
+            min: -500,
+            linked: false,
+            onChange: ({ top, right, bottom, left, unit }) => component.addStyle({
+                'margin-top':    `${top}${unit}`,
+                'margin-right':  `${right}${unit}`,
+                'margin-bottom': `${bottom}${unit}`,
+                'margin-left':   `${left}${unit}`,
+            }),
+        });
+
+        const body = document.createElement('div');
+        body.className = 'space-y-3 text-xs';
+        const lbl = document.createElement('label');
+        lbl.className = 'text-[10px] uppercase tracking-wide text-slate-500';
+        lbl.textContent = 'Margin (T/R/B/L)';
+        body.appendChild(lbl);
+        body.appendChild(margin.el);
+
+        return collapsibleGroup({ title: 'Spacing — margin', defaultOpen: true, children: [body] }).el;
+    });
+
+    registerAdvancedGroup((component) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'p-3 space-y-2 text-xs';
+        const lbl = document.createElement('label');
+        lbl.className = 'text-[10px] uppercase tracking-wide text-slate-500';
+        lbl.textContent = 'Custom CSS (key:value;...)';
+        wrap.appendChild(lbl);
+
+        const textarea = document.createElement('textarea');
+        textarea.rows = 4;
+        textarea.className = 'w-full px-2 py-1 text-xs border border-slate-300 rounded bg-white font-mono';
+        textarea.placeholder = 'e.g.  letter-spacing: 0.05em; opacity: 0.9;';
+        textarea.addEventListener('blur', () => {
+            const css = textarea.value;
+            css.split(';').forEach((pair) => {
+                const [k, v] = pair.split(':').map((s) => s?.trim());
+                if (k && v) component.addStyle({ [k]: v });
+            });
+        });
+        wrap.appendChild(textarea);
+
+        return wrap;
+    });
 
     // Initial content
     if (config.translation?.components) {
