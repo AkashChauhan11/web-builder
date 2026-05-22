@@ -4,6 +4,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import { plugins, registerBlocks } from './builder/blocks.js';
 import { initColoris, rebindColorisOnStyleChanges } from './builder/coloris-init.js';
 import { registerSection } from './builder/sections/section.js';
+import { openSectionPicker } from './builder/sections/section-picker.js';
 
 const SAVE_DEBOUNCE_MS = 5000;
 
@@ -179,6 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
             url.searchParams.set('locale', newLocale);
             window.location.href = url.toString();
         }
+    });
+
+    // ----- Section picker -----
+    document.getElementById('gjs-add-section')?.addEventListener('click', (e) => {
+        openSectionPicker(editor, e.currentTarget);
     });
 
     // ----- Modal helpers -----

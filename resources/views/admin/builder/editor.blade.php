@@ -11,6 +11,11 @@
         </span>
 
         <div class="ms-auto flex items-center gap-2">
+            <button id="gjs-add-section" type="button"
+                class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-semibold">
+                + Section
+            </button>
+
             <div class="flex items-center gap-1 mr-2">
                 <button type="button" data-gjs-device="Desktop"
                     class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-700 hover:bg-slate-200"
