@@ -3,6 +3,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 
 import { plugins, registerBlocks } from './builder/blocks.js';
 import { initColoris, rebindColorisOnStyleChanges } from './builder/coloris-init.js';
+import { registerSection } from './builder/sections/section.js';
 
 const SAVE_DEBOUNCE_MS = 5000;
 
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     });
 
+    registerSection(editor);
     registerBlocks(editor);
     initColoris();
     rebindColorisOnStyleChanges(editor);
