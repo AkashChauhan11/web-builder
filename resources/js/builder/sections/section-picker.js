@@ -1,5 +1,6 @@
-// Section structure picker — a popover with 8 preset column layouts.
-// Clicking a preset inserts a new mp-section with the right number of mp-col children.
+// Section structure picker — a popover with 8 preset column layouts + 4 starter templates.
+
+import { TEMPLATES } from '../templates/index.js';
 
 export const STRUCTURE_PRESETS = [
     { id: 'one',      label: '1',             cols: [100] },
@@ -20,14 +21,48 @@ export function openSectionPicker(editor, anchorButton) {
     popover.className = 'mp-picker absolute z-50 bg-white border border-slate-200 rounded-md shadow-xl p-3 text-sm';
     popover.style.minWidth = '260px';
 
-    const title = document.createElement('div');
-    title.className = 'text-xs font-semibold text-slate-500 mb-2';
-    title.textContent = 'Choose section structure';
-    popover.appendChild(title);
+    const tabBar = document.createElement('div');
+    tabBar.className = 'flex border-b border-slate-200 mb-2';
+    tabBar.innerHTML = `
+        <button type="button" data-pick-tab="structures" class="flex-1 px-3 py-1 text-xs font-medium border-b-2 border-blue-500 text-blue-600">Structures</button>
+        <button type="button" data-pick-tab="templates" class="flex-1 px-3 py-1 text-xs font-medium border-b-2 border-transparent text-slate-600">Templates</button>
+    `;
+    popover.appendChild(tabBar);
 
     const grid = document.createElement('div');
     grid.className = 'grid grid-cols-4 gap-2';
     popover.appendChild(grid);
+
+    const templatesArea = document.createElement('div');
+    templatesArea.className = 'grid grid-cols-2 gap-2';
+    templatesArea.style.display = 'none';
+    popover.appendChild(templatesArea);
+
+    TEMPLATES.forEach((tpl) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'flex flex-col items-center gap-1 p-3 rounded border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-xs';
+        btn.innerHTML = `<span style="font-size:24px">${tpl.thumb}</span><span>${tpl.label}</span>`;
+        btn.addEventListener('click', () => {
+            editor.addComponents([tpl.build()]);
+            closeExistingPicker();
+        });
+        templatesArea.appendChild(btn);
+    });
+
+    tabBar.addEventListener('click', (e) => {
+        const tab = e.target.closest('[data-pick-tab]')?.dataset.pickTab;
+        if (!tab) return;
+        tabBar.querySelectorAll('[data-pick-tab]').forEach((b) => {
+            const active = b.dataset.pickTab === tab;
+            b.classList.toggle('border-blue-500', active);
+            b.classList.toggle('text-blue-600', active);
+            b.classList.toggle('border-transparent', !active);
+            b.classList.toggle('text-slate-600', !active);
+        });
+        grid.style.display = tab === 'structures' ? '' : 'none';
+        templatesArea.style.display = tab === 'templates' ? '' : 'none';
+    });
 
     STRUCTURE_PRESETS.forEach((preset) => {
         const btn = document.createElement('button');

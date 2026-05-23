@@ -19,8 +19,13 @@ it('lists every component type allowed in a builder page tree', function () {
     );
 });
 
-it('lists exactly 23 types — section + column + textnode + 20 widgets', function () {
-    expect(WidgetRegistry::allowedTypes())->toHaveCount(23);
+it('lists exactly 26 types — section + column + textnode + 20 widgets + 3 sub-types', function () {
+    // 3 sub-types: mp-accordion-item, mp-tab, mp-carousel-slide (added in Plan 6)
+    expect(WidgetRegistry::allowedTypes())->toHaveCount(26);
+});
+
+it('includes compound-widget sub-types', function () {
+    expect(WidgetRegistry::allowedTypes())->toContain('mp-accordion-item', 'mp-tab', 'mp-carousel-slide');
 });
 
 it('rejects unknown types via isAllowed()', function () {

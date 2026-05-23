@@ -42,6 +42,11 @@ class WidgetRegistry
         'mp-progress',
         'mp-alert',
         'mp-html',
+
+        // Sub-types for compound widgets (children of their parent widget only)
+        'mp-accordion-item',
+        'mp-tab',
+        'mp-carousel-slide',
     ];
 
     /** @return string[] */

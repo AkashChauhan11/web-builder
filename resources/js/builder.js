@@ -1,11 +1,13 @@
 import grapesjs from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 
-import { plugins, registerBlocks } from './builder/blocks.js';
 import { initColoris, rebindColorisOnStyleChanges } from './builder/coloris-init.js';
+import { registerAllWidgets } from './builder/widgets/index.js';
 import { registerSection } from './builder/sections/section.js';
 import { registerColumn } from './builder/sections/column.js';
 import { openSectionPicker } from './builder/sections/section-picker.js';
+import { configureRTE } from './builder/rte/toolbar.js';
+import { attachPasteFilter } from './builder/rte/paste-filter.js';
 import { mountStylePanel, registerStyleGroup, registerAdvancedGroup } from './builder/style-panel/index.js';
 import { typographyGroup } from './builder/style-panel/groups/typography.js';
 import { backgroundGroup } from './builder/style-panel/groups/background.js';
@@ -30,16 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         height: '100%',
         fromElement: false,
         storageManager: false,
-        plugins: plugins(),
-        pluginsOpts: {
-            'grapesjs-preset-webpage': {
-                // We provide our own device buttons (in the page's top bar) — disable the preset's
-                // built-in device UI so it doesn't sit on top of ours with broken click targets.
-                showDevicesSelect: 0,
-                showDevices: 0,
-            },
-            'grapesjs-blocks-basic': {},
-        },
         deviceManager: {
             devices: [
                 { id: 'desktop', name: 'Desktop', width: '' },
@@ -66,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     registerSection(editor);
     registerColumn(editor);
-    registerBlocks(editor);
+    registerAllWidgets(editor);
+    configureRTE(editor);
+    editor.on('load', () => attachPasteFilter(editor.Canvas.getDocument()));
     initColoris();
     rebindColorisOnStyleChanges(editor);
     mountStylePanel(editor, document.getElementById('mp-style-panel'));
