@@ -16,6 +16,8 @@ import { shadowGroup }  from './builder/style-panel/groups/shadow.js';
 import { spacingGroup } from './builder/style-panel/groups/spacing.js';
 import { sizingGroup }  from './builder/style-panel/groups/sizing.js';
 import { layoutGroup }  from './builder/style-panel/groups/layout.js';
+import { animationGroup } from './builder/style-panel/groups/animation.js';
+import { motionGroup }    from './builder/style-panel/groups/motion.js';
 import { fourSideInput } from './builder/controls/four-side-input.js';
 import { collapsibleGroup } from './builder/controls/collapsible-group.js';
 
@@ -32,6 +34,19 @@ document.addEventListener('DOMContentLoaded', () => {
         height: '100%',
         fromElement: false,
         storageManager: false,
+        blockManager: {
+            appendTo: '#mp-widget-panel',
+        },
+        layerManager: {
+            appendTo: '#mp-layers-panel',
+        },
+        // Register the `hover` state so component.setState('hover') routes addStyle() writes
+        // into the `:hover` pseudo-rule. Without this, GrapesJS silently ignores the state.
+        selectorManager: {
+            states: [
+                { name: 'hover', label: 'Hover' },
+            ],
+        },
         deviceManager: {
             devices: [
                 { id: 'desktop', name: 'Desktop', width: '' },
@@ -71,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     registerStyleGroup(sizingGroup);
     registerStyleGroup(borderGroup);
     registerStyleGroup(shadowGroup);
+    registerStyleGroup(animationGroup);
+    registerStyleGroup(motionGroup);
 
     registerAdvancedGroup((component) => {
         const style = component.getStyle();
@@ -160,6 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const css = editor.getCss();
         const components = editor.getComponents().toJSON();
         const styles = editor.getStyle().toJSON();
+
+        // Auto-generate slug from title if missing (page type only — header/footer don't have slugs)
+        if (config.page?.type === 'page' && !state.currentSlug && state.currentTitle) {
+            state.currentSlug = slugify(state.currentTitle);
+        }
 
         const payload = {
             locale: state.currentLocale,
@@ -256,6 +278,50 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('gjs-add-section')?.addEventListener('click', (e) => {
         openSectionPicker(editor, e.currentTarget);
     });
+
+    // ----- Left sidebar show/hide -----
+    const leftSidebar = document.getElementById('mp-left-sidebar');
+    const leftToggle = document.getElementById('mp-toggle-left');
+    if (leftSidebar && leftToggle) {
+        const STORAGE_KEY = 'mp:left-sidebar-hidden';
+        const setHidden = (hidden) => {
+            leftSidebar.classList.toggle('hidden', hidden);
+            leftToggle.setAttribute('aria-pressed', String(!hidden));
+            leftToggle.classList.toggle('text-blue-400', !hidden);
+            try { window.localStorage.setItem(STORAGE_KEY, hidden ? '1' : '0'); } catch (_) {}
+        };
+        let initial = false;
+        try { initial = window.localStorage.getItem(STORAGE_KEY) === '1'; } catch (_) {}
+        setHidden(initial);
+        leftToggle.addEventListener('click', () => {
+            setHidden(!leftSidebar.classList.contains('hidden'));
+        });
+    }
+
+    // ----- Left sidebar tabs (Widgets / Layers) -----
+    const leftTabs = document.getElementById('mp-left-tabs');
+    if (leftTabs) {
+        const panes = {
+            widgets: document.getElementById('mp-widget-panel'),
+            layers:  document.getElementById('mp-layers-panel'),
+        };
+        leftTabs.querySelectorAll('button[data-pane]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.pane;
+                leftTabs.querySelectorAll('button[data-pane]').forEach((b) => {
+                    const active = b.dataset.pane === target;
+                    b.classList.toggle('border-blue-500', active);
+                    b.classList.toggle('text-blue-400', active);
+                    b.classList.toggle('border-transparent', !active);
+                    b.classList.toggle('text-slate-400', !active);
+                });
+                Object.entries(panes).forEach(([k, el]) => {
+                    if (!el) return;
+                    el.classList.toggle('hidden', k !== target);
+                });
+            });
+        });
+    }
 
     // ----- Modal helpers -----
     bindModal(editor, state, config);

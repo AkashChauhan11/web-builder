@@ -1,9 +1,21 @@
 // mp-section — top-level layout container. Width: boxed | full. Holds mp-column children only.
 // Drop rules: root or inside an mp-column (Inner Section). Never inside another mp-section directly.
 
+import { openSaveAsTemplateModal } from '../templates/save-as-template-modal.js';
+
 const TAG_OPTIONS = ['section', 'header', 'footer', 'div', 'aside'];
 
 export function registerSection(editor) {
+    // Command for the "Save as Template" toolbar button
+    editor.Commands.add('mp:save-as-template', {
+        run(ed) {
+            const sel = ed.getSelected();
+            if (!sel || sel.get('type') !== 'mp-section') return;
+            const config = JSON.parse(document.getElementById('gjs')?.dataset.config ?? '{}');
+            openSaveAsTemplateModal(ed, sel, config);
+        },
+    });
+
     editor.DomComponents.addType('mp-section', {
         isComponent: (el) => el.tagName && el.classList?.contains('mp-sec'),
 
@@ -35,6 +47,12 @@ export function registerSection(editor) {
                     components: [],
                 }],
                 'custom-name': 'Section',
+                toolbar: [
+                    { command: 'mp:save-as-template', label: '★', attributes: { title: 'Save as Template' } },
+                    { command: 'tlb-move', attributes: { class: 'fa fa-arrows', title: 'Move' } },
+                    { command: 'tlb-clone', attributes: { class: 'fa fa-clone', title: 'Duplicate' } },
+                    { command: 'tlb-delete', attributes: { class: 'fa fa-trash', title: 'Delete' } },
+                ],
             },
 
             init() {

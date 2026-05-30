@@ -1,15 +1,25 @@
 // Anchor URL/target/rel editor for the RTE link button.
 // Opened when the user clicks the "link" action in the RTE toolbar, or when editing an existing anchor.
 
+import { positionPopover } from '../controls/popover-position.js';
+import { trapFocus } from '../controls/focus-trap.js';
+
 let activePopover = null;
+let activeClosed = false;
+let activeReleaseFocusTrap = null;
+let activeReposition = null;
 
 export function openLinkPopover({ anchorEl, current = {}, onApply, onUnlink }) {
     closeLinkPopover();
+    activeClosed = false;
 
     const pop = document.createElement('div');
     pop.id = 'mp-link-popover';
     pop.className = 'mp-link-pop absolute z-[60] bg-white border border-slate-200 rounded-md shadow-xl p-3 text-xs';
     pop.style.minWidth = '280px';
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-label', 'Edit link');
+    pop.setAttribute('aria-modal', 'true');
 
     pop.innerHTML = `
         <div class="space-y-2">
@@ -40,9 +50,10 @@ export function openLinkPopover({ anchorEl, current = {}, onApply, onUnlink }) {
     document.body.appendChild(pop);
     activePopover = pop;
 
-    const rect = anchorEl.getBoundingClientRect();
-    pop.style.top = `${rect.bottom + window.scrollY + 4}px`;
-    pop.style.left = `${rect.left + window.scrollX}px`;
+    positionPopover(pop, anchorEl);
+    activeReposition = () => positionPopover(pop, anchorEl);
+    window.addEventListener('scroll', activeReposition, true);
+    window.addEventListener('resize', activeReposition);
 
     pop.addEventListener('click', (e) => {
         const act = e.target.closest('[data-act]')?.dataset.act;
@@ -62,11 +73,13 @@ export function openLinkPopover({ anchorEl, current = {}, onApply, onUnlink }) {
     });
 
     setTimeout(() => {
+        if (activeClosed) return;
         document.addEventListener('mousedown', closeOnOutside, true);
         document.addEventListener('keydown', closeOnEscape, true);
     }, 0);
 
-    pop.querySelector('[name=url]')?.focus();
+    // Trap focus inside the popover and restore on close
+    activeReleaseFocusTrap = trapFocus(pop);
 }
 
 function closeOnOutside(e) {
@@ -81,10 +94,18 @@ function closeOnEscape(e) {
 
 export function closeLinkPopover() {
     if (!activePopover) return;
+    activeClosed = true;
     document.removeEventListener('mousedown', closeOnOutside, true);
     document.removeEventListener('keydown', closeOnEscape, true);
+    if (activeReposition) {
+        window.removeEventListener('scroll', activeReposition, true);
+        window.removeEventListener('resize', activeReposition);
+        activeReposition = null;
+    }
     activePopover.remove();
     activePopover = null;
+    activeReleaseFocusTrap?.();
+    activeReleaseFocusTrap = null;
 }
 
 function escapeAttr(s) { return String(s ?? '').replace(/"/g, '&quot;'); }

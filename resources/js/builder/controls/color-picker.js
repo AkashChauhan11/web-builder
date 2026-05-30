@@ -1,10 +1,40 @@
 // Wraps the existing Coloris init from Plan 2.
-// Coloris is initialized once in builder.js (kept from existing builder/coloris-init.js).
-// This factory just returns an <input data-coloris> that the global Coloris instance attaches to.
+// Now also shows a row of 6 theme color swatches above the hex input.
+
+import { getThemeColors } from '../global-styles/theme-colors.js';
 
 export function colorPicker({ value = '#000000', onChange = () => {} } = {}) {
     const el = document.createElement('div');
-    el.className = 'flex items-center gap-2';
+    el.className = 'flex flex-col gap-2';
+
+    // Theme swatches row
+    const themeRow = document.createElement('div');
+    themeRow.className = 'flex items-center gap-1';
+
+    const themeLabel = document.createElement('span');
+    themeLabel.className = 'text-[10px] uppercase tracking-wide text-slate-500 mr-1';
+    themeLabel.textContent = 'Theme';
+    themeRow.appendChild(themeLabel);
+
+    const colors = getThemeColors();
+    Object.entries(colors).forEach(([key, color]) => {
+        const sw = document.createElement('button');
+        sw.type = 'button';
+        sw.className = 'w-5 h-5 rounded border border-slate-300 hover:border-blue-500 hover:scale-110 transition shrink-0';
+        sw.style.background = color;
+        sw.title = `${key} (${color})`;
+        sw.addEventListener('click', () => {
+            input.value = color;
+            swatch.style.background = color;
+            onChange(color);
+        });
+        themeRow.appendChild(sw);
+    });
+    el.appendChild(themeRow);
+
+    // Custom hex input row (existing)
+    const customRow = document.createElement('div');
+    customRow.className = 'flex items-center gap-2';
 
     const swatch = document.createElement('span');
     swatch.className = 'w-6 h-6 rounded border border-slate-300 shrink-0';
@@ -21,8 +51,9 @@ export function colorPicker({ value = '#000000', onChange = () => {} } = {}) {
         onChange(input.value);
     });
 
-    el.appendChild(swatch);
-    el.appendChild(input);
+    customRow.appendChild(swatch);
+    customRow.appendChild(input);
+    el.appendChild(customRow);
 
     return {
         el,

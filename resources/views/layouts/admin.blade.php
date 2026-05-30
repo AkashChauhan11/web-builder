@@ -19,6 +19,9 @@
                 <a href="{{ route('admin.builder.index', ['type' => 'footer']) }}" class="block px-3 py-2 rounded hover:bg-slate-800">Footers</a>
                 <div class="border-t border-slate-800 my-2"></div>
                 <a href="{{ route('admin.media.index') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Media</a>
+                <a href="{{ route('admin.templates.index') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Templates</a>
+                <a href="{{ route('admin.global-styles.edit') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Global Styles</a>
+                <a href="{{ route('admin.forms.submissions.index') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Form Submissions</a>
                 <a href="{{ route('admin.languages.index') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Languages</a>
                 <a href="{{ route('admin.users.index') }}" class="block px-3 py-2 rounded hover:bg-slate-800">Users</a>
             </nav>

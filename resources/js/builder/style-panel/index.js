@@ -1,6 +1,9 @@
 // Custom style panel — three tabs (Content / Style / Advanced) mounted in #mp-style-panel.
 // Renders for the currently selected GrapesJS component.
 
+import { currentDeviceName } from '../responsive/device-style.js';
+import { stateToggle } from './state-toggle.js';
+
 const TAB_DEFS = [
     { id: 'content',  label: 'Content' },
     { id: 'style',    label: 'Style' },
@@ -30,7 +33,7 @@ export function mountStylePanel(editor, rootEl) {
             return;
         }
 
-        const header = makeHeader(currentComponent);
+        const header = makeHeader(currentComponent, editor);
         rootEl.appendChild(header);
 
         const tabs = makeTabs(currentTab, (tabId) => { currentTab = tabId; render(); });
@@ -53,20 +56,60 @@ export function mountStylePanel(editor, rootEl) {
     editor.on('component:select', syncSelection);
     editor.on('component:deselected', syncSelection);
 
+    // Re-render when the active device changes so the header's device pill + controls reflect the new device.
+    editor.on('change:device', render);
+
+    // Re-render when the user switches Normal/Hover state from the panel header
+    document.addEventListener('mp:panel-state-change', render);
+
     render();
 }
 
-function makeHeader(component) {
+function makeHeader(component, editor) {
     const wrap = document.createElement('div');
     wrap.className = 'px-3 py-2 border-b border-slate-200 bg-white';
+
+    const topRow = document.createElement('div');
+    topRow.className = 'flex items-center justify-between gap-2';
+
+    const left = document.createElement('div');
+    left.className = 'min-w-0';
     const name = document.createElement('div');
-    name.className = 'text-xs font-semibold text-slate-700';
+    name.className = 'text-xs font-semibold text-slate-700 truncate';
     name.textContent = component.get('name') || component.get('type');
-    wrap.appendChild(name);
+    left.appendChild(name);
     const typeBadge = document.createElement('div');
-    typeBadge.className = 'text-[10px] uppercase tracking-wide text-slate-400 font-mono';
+    typeBadge.className = 'text-[10px] uppercase tracking-wide text-slate-400 font-mono truncate';
     typeBadge.textContent = component.get('type');
-    wrap.appendChild(typeBadge);
+    left.appendChild(typeBadge);
+    topRow.appendChild(left);
+
+    // Device pill — shows which device the style edits will write to
+    const device = currentDeviceName(editor);
+    const pill = document.createElement('span');
+    pill.className = 'text-[10px] uppercase tracking-wide px-2 py-0.5 rounded font-semibold shrink-0 ' +
+        (device === 'Desktop' ? 'bg-blue-500 text-white' : 'bg-amber-500 text-white');
+    pill.textContent = device;
+    pill.title = `Editing styles for: ${device}. Use the device buttons in the top toolbar to switch.`;
+    topRow.appendChild(pill);
+
+    wrap.appendChild(topRow);
+
+    // Normal / Hover state toggle — writes route to the active state's CSS rule
+    const stateRow = document.createElement('div');
+    stateRow.className = 'mt-2';
+    stateRow.appendChild(stateToggle({
+        editor,
+        onChange: () => {
+            // Re-render the panel so the toggle reflects the active state
+            window.requestAnimationFrame(() => {
+                const evt = new CustomEvent('mp:panel-state-change');
+                document.dispatchEvent(evt);
+            });
+        },
+    }));
+    wrap.appendChild(stateRow);
+
     return wrap;
 }
 

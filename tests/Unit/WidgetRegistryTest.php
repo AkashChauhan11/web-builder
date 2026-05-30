@@ -19,9 +19,20 @@ it('lists every component type allowed in a builder page tree', function () {
     );
 });
 
-it('lists exactly 26 types — section + column + textnode + 20 widgets + 3 sub-types', function () {
-    // 3 sub-types: mp-accordion-item, mp-tab, mp-carousel-slide (added in Plan 6)
-    expect(WidgetRegistry::allowedTypes())->toHaveCount(26);
+it('lists exactly 34 types — Phase A 28 + Phase C 3 + Form Builder 3', function () {
+    expect(WidgetRegistry::allowedTypes())->toHaveCount(34);
+});
+
+it('includes Phase C widgets', function () {
+    expect(WidgetRegistry::allowedTypes())->toContain('mp-map', 'mp-rating', 'mp-shortcode');
+});
+
+it('includes Form Builder widget types', function () {
+    expect(WidgetRegistry::allowedTypes())->toContain('mp-form', 'mp-form-field', 'mp-form-submit');
+});
+
+it('allows GrapesJS built-in implicit types', function () {
+    expect(WidgetRegistry::allowedTypes())->toContain('default', 'wrapper');
 });
 
 it('includes compound-widget sub-types', function () {
@@ -69,4 +80,40 @@ it('rejects roots that are not mp-section', function () {
 
     $valid = [['type' => 'mp-section', 'components' => []]];
     expect(WidgetRegistry::hasInvalidRoots($valid))->toBeFalse();
+});
+
+it('flags nodes with non-string type as malformed', function () {
+    $tree = [['type' => 123, 'components' => []]];
+    expect(WidgetRegistry::hasMalformedNodes($tree))->toBeTrue();
+});
+
+it('accepts nodes with missing type (implicit GrapesJS default)', function () {
+    // GrapesJS omits `type` from toJSON output for plain elements that match the default type.
+    $tree = [['tagName' => 'div', 'components' => []]];
+    expect(WidgetRegistry::hasMalformedNodes($tree))->toBeFalse();
+});
+
+it('flags nodes with empty-string type as malformed', function () {
+    $tree = [['type' => '', 'components' => []]];
+    expect(WidgetRegistry::hasMalformedNodes($tree))->toBeTrue();
+});
+
+it('flags nodes with non-array components as malformed', function () {
+    $tree = [['type' => 'mp-section', 'components' => 'oops']];
+    expect(WidgetRegistry::hasMalformedNodes($tree))->toBeTrue();
+});
+
+it('accepts well-formed trees', function () {
+    $tree = [['type' => 'mp-section', 'components' => [['type' => 'mp-column', 'components' => []]]]];
+    expect(WidgetRegistry::hasMalformedNodes($tree))->toBeFalse();
+});
+
+it('returns ordered unique unknown types when multiple unknowns present', function () {
+    $tree = [
+        ['type' => 'mp-section', 'components' => [
+            ['type' => 'mp-foo', 'components' => []],
+            ['type' => 'mp-bar', 'components' => [['type' => 'mp-foo', 'components' => []]]],
+        ]],
+    ];
+    expect(WidgetRegistry::unknownTypesIn($tree))->toBe(['mp-foo', 'mp-bar']);
 });

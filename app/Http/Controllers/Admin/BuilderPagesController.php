@@ -196,6 +196,10 @@ class BuilderPagesController extends Controller
                     if (! is_array($value)) {
                         return;
                     }
+                    if (WidgetRegistry::hasMalformedNodes($value)) {
+                        $fail('Page contains malformed component nodes (missing or invalid type, or non-array components).');
+                        return;
+                    }
                     if (WidgetRegistry::hasInvalidRoots($value)) {
                         $fail('Page root must contain only mp-section components.');
                         return;
@@ -234,6 +238,13 @@ class BuilderPagesController extends Controller
             ]);
 
             $sanitizedHtml = HtmlSanitizer::stripDocumentWrappers($data['html'] ?? '');
+            // Pass 2: sanitize the rendered HTML body for forbidden tags / disallowed iframes / event handlers
+            $sanitizedHtml = HtmlSanitizer::sanitizeRawHtml($sanitizedHtml);
+
+            // Sanitize mp-html widget content inside the components tree
+            $sanitizedComponents = is_array($data['components_json'] ?? null)
+                ? HtmlSanitizer::sanitizeHtmlWidgets($data['components_json'])
+                : null;
 
             $page->translations()->updateOrCreate(
                 ['locale' => $data['locale']],
@@ -241,7 +252,7 @@ class BuilderPagesController extends Controller
                     'title' => $data['title'],
                     'html' => $sanitizedHtml,
                     'css' => $data['css'] ?? '',
-                    'components_json' => $data['components_json'] ?? null,
+                    'components_json' => $sanitizedComponents,
                     'styles_json' => $data['styles_json'] ?? null,
                 ],
             );

@@ -30,6 +30,12 @@
         <script type="application/ld+json">@json($seo->schema_json)</script>
     @endif
 
+    @vite(['resources/css/app.css', 'resources/js/builder-runtime.js'])
+
+    @isset($globalStyle)
+        @include('partials.global-styles-vars', ['globalStyle' => $globalStyle])
+    @endisset
+
     <style>{!! $translation->css ?? '' !!}</style>
     @if ($header)
         <style>{!! $header->css ?? '' !!}</style>
@@ -40,15 +46,15 @@
 </head>
 <body>
     @if ($header)
-        {!! str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $header->html ?? '') !!}
+        {!! \App\Support\ShortcodeRenderer::replace(str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $header->html ?? '')) !!}
     @endif
 
     <main>
-        {!! str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $translation->html ?? '') !!}
+        {!! \App\Support\ShortcodeRenderer::replace(str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $translation->html ?? '')) !!}
     </main>
 
     @if ($footer)
-        {!! str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $footer->html ?? '') !!}
+        {!! \App\Support\ShortcodeRenderer::replace(str_replace('{{LOCALE_PREFIX}}', $localePrefix ?? '', $footer->html ?? '')) !!}
     @endif
 </body>
 </html>

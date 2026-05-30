@@ -2,6 +2,7 @@ import { numberWithUnit } from '../../controls/number-with-unit.js';
 import { colorPicker } from '../../controls/color-picker.js';
 import { presetChips } from '../../controls/preset-chips.js';
 import { collapsibleGroup } from '../../controls/collapsible-group.js';
+import { getTypographyPresets } from '../../global-styles/theme-colors.js';
 
 const FONT_FAMILIES = [
     { value: 'inherit', label: 'Inherit' },
@@ -90,8 +91,31 @@ export function typographyGroup(component) {
         onChange: (v) => component.addStyle({ color: v }),
     });
 
+    // Typography presets row — apply H1/H2/H3/Body from the global styles
+    const presets = getTypographyPresets();
+    const presetChipsRow = presetChips({
+        options: [
+            { value: 'h1', label: 'H1' },
+            { value: 'h2', label: 'H2' },
+            { value: 'h3', label: 'H3' },
+            { value: 'body', label: 'Body' },
+        ],
+        value: null,
+        onChange: (key) => {
+            const p = presets[key];
+            if (!p) return;
+            component.addStyle({
+                'font-family': p.font_family,
+                'font-size': p.font_size,
+                'font-weight': p.font_weight,
+                'line-height': p.line_height,
+            });
+        },
+    });
+
     const body = document.createElement('div');
     body.className = 'space-y-3 text-xs';
+    body.appendChild(row('Presets', presetChipsRow.el));
     body.appendChild(row('Family', fontFamilySelect));
     body.appendChild(row('Size', fontSize.el));
     body.appendChild(row('Weight', weight.el));

@@ -13,8 +13,10 @@ class WidgetRegistry
         'mp-section',
         'mp-column',
 
-        // GrapesJS built-in for inline text
+        // GrapesJS built-in types (text nodes + plain div/elements without a custom type)
         'textnode',
+        'default',
+        'wrapper',
 
         // 20 widgets (Plan 6 implements them client-side)
         // Content (8)
@@ -47,6 +49,16 @@ class WidgetRegistry
         'mp-accordion-item',
         'mp-tab',
         'mp-carousel-slide',
+
+        // Phase C widgets
+        'mp-map',
+        'mp-rating',
+        'mp-shortcode',
+
+        // Phase C/2 — Form Builder
+        'mp-form',
+        'mp-form-field',
+        'mp-form-submit',
     ];
 
     /** @return string[] */
@@ -70,12 +82,42 @@ class WidgetRegistry
     {
         $unknown = [];
         self::walk($tree, function (array $node) use (&$unknown) {
-            $type = $node['type'] ?? null;
+            // Missing type is fine — GrapesJS implicit 'default'. Only explicit unknown types are flagged.
+            if (! isset($node['type'])) {
+                return;
+            }
+            $type = $node['type'];
             if (is_string($type) && ! self::isAllowed($type) && ! in_array($type, $unknown, true)) {
                 $unknown[] = $type;
             }
         });
         return $unknown;
+    }
+
+    /**
+     * Returns true if the tree contains any structurally malformed nodes.
+     * - missing or non-string `type`
+     * - `components` key present but not an array
+     *
+     * @param  array<int,array<string,mixed>>  $tree
+     */
+    public static function hasMalformedNodes(array $tree): bool
+    {
+        $found = false;
+        self::walk($tree, function (array $node) use (&$found) {
+            // Type is optional — GrapesJS omits it for plain elements (implicit 'default' type).
+            // If present, it must be a non-empty string.
+            if (array_key_exists('type', $node)
+                && (! is_string($node['type']) || $node['type'] === '')
+            ) {
+                $found = true;
+                return;
+            }
+            if (array_key_exists('components', $node) && ! is_array($node['components'])) {
+                $found = true;
+            }
+        });
+        return $found;
     }
 
     /**

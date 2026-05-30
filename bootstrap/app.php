@@ -15,6 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
+        // Public form submissions don't have a CSRF token (they're submitted from any visitor).
+        // Anti-spam is handled via the honeypot field + minimum-time check in the controller.
+        $middleware->validateCsrfTokens(except: [
+            'forms/submit',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -1,6 +1,9 @@
-// Section structure picker — a popover with 8 preset column layouts + 4 starter templates.
+// Section structure picker — a popover with 8 preset column layouts + DB-backed templates.
 
 import { TEMPLATES } from '../templates/index.js';
+import { fetchTemplates } from '../templates/library.js';
+import { positionPopover } from '../controls/popover-position.js';
+import { trapFocus } from '../controls/focus-trap.js';
 
 export const STRUCTURE_PRESETS = [
     { id: 'one',      label: '1',             cols: [100] },
@@ -16,10 +19,16 @@ export const STRUCTURE_PRESETS = [
 export function openSectionPicker(editor, anchorButton) {
     closeExistingPicker();
 
+    let closed = false;
+
     const popover = document.createElement('div');
     popover.id = 'mp-section-picker';
     popover.className = 'mp-picker absolute z-50 bg-white border border-slate-200 rounded-md shadow-xl p-3 text-sm';
     popover.style.minWidth = '260px';
+    popover.setAttribute('role', 'dialog');
+    popover.setAttribute('aria-label', 'Choose section structure or template');
+
+    anchorButton?.setAttribute('aria-expanded', 'true');
 
     const tabBar = document.createElement('div');
     tabBar.className = 'flex border-b border-slate-200 mb-2';
@@ -38,6 +47,7 @@ export function openSectionPicker(editor, anchorButton) {
     templatesArea.style.display = 'none';
     popover.appendChild(templatesArea);
 
+    // Bundled (JS-shipped) templates first
     TEMPLATES.forEach((tpl) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -48,6 +58,26 @@ export function openSectionPicker(editor, anchorButton) {
             closeExistingPicker();
         });
         templatesArea.appendChild(btn);
+    });
+
+    // DB-backed user templates (fetched async, appended when ready)
+    fetchTemplates().then((dbTemplates) => {
+        dbTemplates.forEach((tpl) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'flex flex-col items-center gap-1 p-3 rounded border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-xs relative';
+            const thumb = tpl.thumbnail_url
+                ? `<img src="${tpl.thumbnail_url}" alt="" class="w-full h-12 object-cover rounded">`
+                : '<span style="font-size:24px">⭐</span>';
+            const badge = tpl.is_bundled ? '' : '<span class="absolute top-1 right-1 text-[9px] uppercase bg-emerald-500 text-white px-1 rounded">Saved</span>';
+            btn.innerHTML = `${badge}${thumb}<span>${escapeHtml(tpl.name)}</span>`;
+            btn.addEventListener('click', () => {
+                const tree = Array.isArray(tpl.components_json) ? tpl.components_json : [tpl.components_json];
+                editor.addComponents(tree);
+                closeExistingPicker();
+            });
+            templatesArea.appendChild(btn);
+        });
     });
 
     tabBar.addEventListener('click', (e) => {
@@ -92,27 +122,43 @@ export function openSectionPicker(editor, anchorButton) {
         grid.appendChild(btn);
     });
 
-    // Position the popover under the anchor
-    const rect = anchorButton.getBoundingClientRect();
+    // Position the popover under the anchor, clamped to viewport
     document.body.appendChild(popover);
-    const popRect = popover.getBoundingClientRect();
-    popover.style.top = `${rect.bottom + window.scrollY + 4}px`;
-    popover.style.left = `${rect.right + window.scrollX - popRect.width}px`;
+    positionPopover(popover, anchorButton);
 
-    // Close on outside click / Escape
+    // Reposition on scroll / resize while the popover is open
+    const reposition = () => positionPopover(popover, anchorButton);
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
+
+    // Trap focus within the popover and restore on close
+    popover.setAttribute('aria-modal', 'true');
+    const releaseFocusTrap = trapFocus(popover);
+
+    // Close on outside click / Escape — schedule listeners after this tick so the
+    // current click doesn't immediately close the popover. The `closed` flag
+    // ensures we don't attach listeners if the popover was already closed in-between.
     setTimeout(() => {
+        if (closed) return;
         document.addEventListener('mousedown', onOutsideClick, true);
         document.addEventListener('keydown', onEscape, true);
     }, 0);
 
     function onOutsideClick(e) {
-        if (popover.contains(e.target) || anchorButton.contains(e.target)) return;
+        if (popover.contains(e.target) || anchorButton?.contains?.(e.target)) return;
         closeExistingPicker();
     }
     function onEscape(e) { if (e.key === 'Escape') closeExistingPicker(); }
+
     popover._cleanup = () => {
+        closed = true;
         document.removeEventListener('mousedown', onOutsideClick, true);
         document.removeEventListener('keydown', onEscape, true);
+        window.removeEventListener('scroll', reposition, true);
+        window.removeEventListener('resize', reposition);
+        anchorButton?.setAttribute('aria-expanded', 'false');
+        // Release the focus trap (also restores focus to previously-focused element)
+        releaseFocusTrap?.();
     };
 }
 
@@ -122,6 +168,10 @@ function closeExistingPicker() {
         existing._cleanup?.();
         existing.remove();
     }
+}
+
+function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 function insertSection(editor, columnWidths) {

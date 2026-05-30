@@ -10,7 +10,7 @@ const BG_TYPES = [
     { value: 'image',    label: 'Image' },
 ];
 
-export function backgroundGroup(component) {
+export function backgroundGroup(component, editor) {
     const style = component.getStyle();
 
     const typeChips = presetChips({
@@ -59,15 +59,36 @@ export function backgroundGroup(component) {
             }
             updateGradient();
         } else if (type === 'image') {
+            const srcRow = document.createElement('div');
+            srcRow.className = 'flex gap-2';
+
             const url = document.createElement('input');
             url.type = 'text';
             url.placeholder = '/storage/builder-assets/...';
-            url.className = 'w-full px-2 py-1 text-xs border border-slate-300 rounded';
+            url.className = 'flex-1 min-w-0 px-2 py-1 text-xs border border-slate-300 rounded';
             url.value = extractImageUrl(style['background-image']) || '';
-            url.addEventListener('input', () => {
-                component.addStyle({ 'background-image': url.value ? `url(${url.value})` : '' });
+            const applyUrl = (v) => component.addStyle({ 'background-image': v ? `url(${v})` : '' });
+            url.addEventListener('input', () => applyUrl(url.value));
+            srcRow.appendChild(url);
+
+            const pickBtn = document.createElement('button');
+            pickBtn.type = 'button';
+            pickBtn.className = 'px-2 py-1 text-xs bg-slate-100 hover:bg-slate-200 rounded';
+            pickBtn.textContent = 'Pick';
+            pickBtn.addEventListener('click', () => {
+                if (!editor?.AssetManager) return;
+                editor.AssetManager.open({
+                    select: (asset) => {
+                        const src = asset.getSrc();
+                        url.value = src;
+                        applyUrl(src);
+                        editor.AssetManager.close();
+                    },
+                });
             });
-            dynamicArea.appendChild(row('Image URL', url));
+            srcRow.appendChild(pickBtn);
+
+            dynamicArea.appendChild(row('Image', srcRow));
 
             const size = presetChips({
                 options: [
